@@ -81,7 +81,7 @@ p.launch({
   .then(function (title) {
     language = title.trim();
     console.log(language);
-    return page.click("[data-attr2='Problem']");
+    return page.click("[data-attr2='Problem']");   //goes back to "problem" tab
   })
   .then(function(){
     return pasteCode();
@@ -91,36 +91,37 @@ p.launch({
   });
 
 
-  function pasteCode() {
+  function pasteCode() {   //we will first type the code in "test against custom input" tab then copy whole code and then paste in solution tab becoz if we directly type in solution tab then "{" will become "{}" automaticcally
+
     return new Promise(function (resolve, reject) {
       page
         .waitForSelector("[type='checkbox']")
         .then(function () {
-          return page.click("[type='checkbox']");
+          return page.click("[type='checkbox']");  //clicks "test against custom input" button
         })
         .then(function () {
-          return page.waitForSelector("#input-1");
+          return page.waitForSelector("#input-1");   // clicks where we have to type
         })
         .then(function () {
-          return page.type("#input-1", code);
+          return page.type("#input-1", code);   //types the code
         })
         .then(function () {
           return page.keyboard.down("Control");
         })
         .then(function () {
-          return page.keyboard.press("A");
+          return page.keyboard.press("A");    //ctrl + A  selects whole code
         })
         .then(function () {
-          return page.keyboard.press("X");
+          return page.keyboard.press("X");  //ctrl+x cuts whole code
         })
         .then(function () {
-          return page.click(".css-1hwfws3");
+          return page.click(".css-1hwfws3");   // clicks on language selection panel
         })
         .then(function () {
           return page.keyboard.up("Control");
         })
         .then(function () {
-          return page.type(".css-1hwfws3", language);
+          return page.type(".css-1hwfws3", language);   //types the language in which code was written 
         })
         .then(function () {
           return page.keyboard.press("Enter");
@@ -129,13 +130,13 @@ p.launch({
           return page.keyboard.down("Control");
         })
         .then(function () {
-          return page.click(".monaco-editor.no-user-select.vs");
+          return page.click(".monaco-editor.no-user-select.vs");  //clicks on solution tab
         })
         .then(function () {
-          return page.keyboard.press("A");
+          return page.keyboard.press("A");   //select whole code
         })
         .then(function () {
-          return page.keyboard.press("V");
+          return page.keyboard.press("V");  //paste previous copied code
         })
         .then(function () {
           return page.keyboard.up("Control");
@@ -143,7 +144,7 @@ p.launch({
         .then(function () {
           return page.click(
             ".ui-btn.ui-btn-normal.ui-btn-primary.pull-right.hr-monaco-submit.ui-btn-styled"
-          );
+          );  //clicks submit button
         })
         .then(function () {
           resolve();
@@ -157,7 +158,7 @@ p.launch({
   function handleLockButton() {        //agar ek baat editorial unlock ho gya toh uska button wha se hatt jaata h ....toh button dhudte hue error na aaye yeh kaam h iss function ka(this is promise based function)
     return new Promise(function (resolve, reject) {
       page
-        .waitForSelector(".ui-btn.ui-btn-normal.ui-btn-primary.ui-btn-styled")
+        .waitForSelector(".ui-btn.ui-btn-normal.ui-btn-primary.ui-btn-styled" ,{ visible: true })
         .then(function () {
           return page.click(".ui-btn.ui-btn-normal.ui-btn-primary.ui-btn-styled");   //CSS of unlock button 
         })
@@ -173,7 +174,7 @@ p.launch({
   function waitClickNavigate(selector) {    //wait of selector and then click and wait for navigation  bohot baar kiya h ..toh jo kaam bohot baar karte h usse function mai daalna chaiye (this is promise based function)
     return new Promise(function (resolve, reject) {
       page
-        .waitForSelector(selector, { visible: true })   // { visible: true } ==means force karte h ki jab tak screen dikhe na wait karte rhao
+        .waitForSelector(selector, { visible: true })   // { visible: true } ==means force karte h ki jab tak DOM mai load na ho wait kar
         .then(function () {
           return Promise.all([page.click(selector), page.waitForNavigation()]);
         })
